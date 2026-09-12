@@ -1,61 +1,48 @@
 import React, { useEffect, useState } from "react";
+import {
+  SafeAreaView,
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  TextInput,
+  StatusBar,
+} from "react-native";
 
 export default function App() {
-  const [active, setActive] = useState("Dashboard");
+  const [screen, setScreen] = useState("Inicio");
   const [dark, setDark] = useState(false);
-  const [tasks, setTasks] = useState([
-    { id: 1, title: "Entrega de proyecto React", subject: "Programación", date: "Hoy", done: false },
-    { id: 2, title: "Leer capítulo 4", subject: "Bases de Datos", date: "Mañana", done: false },
-    { id: 3, title: "Quiz de matemáticas", subject: "Matemáticas", date: "15 Sep", done: true },
-  ]);
 
-  const [notes, setNotes] = useState([
-    { id: 1, title: "React Hooks", text: "useState permite manejar el estado de los componentes." },
-    { id: 2, title: "SQL", text: "SELECT permite consultar información de una tabla." },
+  // -------------------------
+  // TAREAS
+  // -------------------------
+
+  const [tasks, setTasks] = useState([
+    {
+      id: 1,
+      title: "Terminar proyecto de React",
+      subject: "Programación",
+      date: "Hoy",
+      done: false,
+    },
+    {
+      id: 2,
+      title: "Leer capítulo 4",
+      subject: "Bases de Datos",
+      date: "Mañana",
+      done: false,
+    },
+    {
+      id: 3,
+      title: "Quiz de matemáticas",
+      subject: "Matemáticas",
+      date: "15 Sep",
+      done: true,
+    },
   ]);
 
   const [newTask, setNewTask] = useState("");
-  const [newNote, setNewNote] = useState("");
-  const [newMessage, setNewMessage] = useState("");
-
-  const [messages, setMessages] = useState([
-    { user: "Laura", text: "¿Alguien ya terminó el proyecto?" },
-    { user: "Carlos", text: "Yo voy por la mitad 😅" },
-    { user: "Tú", text: "Yo lo termino esta tarde." },
-  ]);
-
-  const [seconds, setSeconds] = useState(25 * 60);
-  const [running, setRunning] = useState(false);
-
-  useEffect(() => {
-    if (!running) return;
-
-    const interval = setInterval(() => {
-      setSeconds((s) => {
-        if (s <= 1) {
-          setRunning(false);
-          return 25 * 60;
-        }
-        return s - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [running]);
-
-  const formatTime = () => {
-    const min = Math.floor(seconds / 60).toString().padStart(2, "0");
-    const sec = (seconds % 60).toString().padStart(2, "0");
-    return `${min}:${sec}`;
-  };
-
-  const toggleTask = (id) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, done: !task.done } : task
-      )
-    );
-  };
 
   const addTask = () => {
     if (!newTask.trim()) return;
@@ -74,6 +61,35 @@ export default function App() {
     setNewTask("");
   };
 
+  const toggleTask = (id) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === id
+          ? { ...task, done: !task.done }
+          : task
+      )
+    );
+  };
+
+  // -------------------------
+  // NOTAS
+  // -------------------------
+
+  const [notes, setNotes] = useState([
+    {
+      id: 1,
+      title: "React Hooks",
+      text: "useState permite manejar el estado de los componentes.",
+    },
+    {
+      id: 2,
+      title: "SQL",
+      text: "SELECT permite consultar información de una tabla.",
+    },
+  ]);
+
+  const [newNote, setNewNote] = useState("");
+
   const addNote = () => {
     if (!newNote.trim()) return;
 
@@ -89,6 +105,27 @@ export default function App() {
     setNewNote("");
   };
 
+  // -------------------------
+  // CHAT
+  // -------------------------
+
+  const [messages, setMessages] = useState([
+    {
+      user: "Laura",
+      text: "¿Alguien ya terminó el proyecto?",
+    },
+    {
+      user: "Carlos",
+      text: "Yo voy por la mitad 😅",
+    },
+    {
+      user: "Tú",
+      text: "Yo lo termino esta tarde.",
+    },
+  ]);
+
+  const [newMessage, setNewMessage] = useState("");
+
   const sendMessage = () => {
     if (!newMessage.trim()) return;
 
@@ -103,1220 +140,1541 @@ export default function App() {
     setNewMessage("");
   };
 
-  const menu = [
-    ["Dashboard", "⌂"],
-    ["Horario", "📅"],
-    ["Tareas", "✓"],
-    ["Calificaciones", "📊"],
-    ["Pomodoro", "⏱"],
-    ["Apuntes", "📚"],
-    ["Grupos", "👥"],
-    ["Chat", "💬"],
-  ];
+  // -------------------------
+  // POMODORO
+  // -------------------------
 
-  const schedule = [
-    ["8:00", "Programación", "Aula 301", "#6366f1"],
-    ["10:00", "Matemáticas", "Aula 204", "#ec4899"],
-    ["13:00", "Bases de Datos", "Laboratorio", "#14b8a6"],
-    ["15:00", "Inglés", "Aula 102", "#f59e0b"],
-  ];
+  const [seconds, setSeconds] = useState(25 * 60);
+  const [running, setRunning] = useState(false);
+
+  useEffect(() => {
+    if (!running) return;
+
+    const timer = setInterval(() => {
+      setSeconds((value) => {
+        if (value <= 1) {
+          setRunning(false);
+          return 25 * 60;
+        }
+
+        return value - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [running]);
+
+  const formatTime = () => {
+    const minutes = Math.floor(seconds / 60)
+      .toString()
+      .padStart(2, "0");
+
+    const secs = (seconds % 60)
+      .toString()
+      .padStart(2, "0");
+
+    return `${minutes}:${secs}`;
+  };
+
+  // -------------------------
+  // DATOS
+  // -------------------------
 
   const grades = [
-    ["Programación", 4.8],
-    ["Matemáticas", 4.2],
-    ["Bases de Datos", 4.6],
-    ["Inglés", 4.5],
+    {
+      subject: "Programación",
+      grade: 4.8,
+    },
+    {
+      subject: "Matemáticas",
+      grade: 4.2,
+    },
+    {
+      subject: "Bases de Datos",
+      grade: 4.6,
+    },
+    {
+      subject: "Inglés",
+      grade: 4.5,
+    },
   ];
 
   const average =
-    grades.reduce((sum, item) => sum + item[1], 0) / grades.length;
-
-  return (
-    <div className={dark ? "app dark" : "app"}>
-      <style>{`
-        * {
-          box-sizing: border-box;
-          margin: 0;
-          padding: 0;
-        }
-
-        body {
-          font-family: Inter, Arial, sans-serif;
-          background: #f5f7fb;
-        }
-
-        button, input, textarea {
-          font: inherit;
-        }
-
-        .app {
-          min-height: 100vh;
-          display: flex;
-          background: #f6f7fb;
-          color: #182033;
-        }
-
-        .dark {
-          background: #10131c;
-          color: #f3f4f6;
-        }
-
-        /* SIDEBAR */
-
-        .sidebar {
-          width: 250px;
-          min-height: 100vh;
-          background: #ffffff;
-          border-right: 1px solid #e8eaf0;
-          padding: 25px 16px;
-          position: fixed;
-          left: 0;
-          top: 0;
-          bottom: 0;
-          z-index: 10;
-        }
-
-        .dark .sidebar {
-          background: #171a24;
-          border-color: #292d3a;
-        }
-
-        .logo {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 0 10px 30px;
-        }
-
-        .logo-icon {
-          width: 42px;
-          height: 42px;
-          border-radius: 13px;
-          display: grid;
-          place-items: center;
-          color: white;
-          font-weight: bold;
-          font-size: 21px;
-          background: linear-gradient(135deg, #6366f1, #8b5cf6);
-          box-shadow: 0 8px 20px rgba(99,102,241,.25);
-        }
-
-        .logo h2 {
-          font-size: 21px;
-        }
-
-        .logo span {
-          color: #6366f1;
-        }
-
-        .menu-title {
-          font-size: 11px;
-          color: #9ca3af;
-          font-weight: bold;
-          margin: 15px 12px 10px;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-        }
-
-        .nav {
-          display: flex;
-          flex-direction: column;
-          gap: 5px;
-        }
-
-        .nav button {
-          border: none;
-          background: transparent;
-          padding: 12px 14px;
-          border-radius: 10px;
-          cursor: pointer;
-          color: #6b7280;
-          text-align: left;
-          display: flex;
-          align-items: center;
-          gap: 13px;
-          transition: .2s;
-        }
-
-        .dark .nav button {
-          color: #a8adba;
-        }
-
-        .nav button:hover {
-          background: #f0f1ff;
-          color: #6366f1;
-        }
-
-        .nav button.active {
-          background: #eef0ff;
-          color: #5b5ee7;
-          font-weight: 700;
-        }
-
-        .dark .nav button.active {
-          background: #282b43;
-        }
-
-        .nav-icon {
-          width: 23px;
-          text-align: center;
-          font-size: 17px;
-        }
-
-        .profile {
-          position: absolute;
-          bottom: 22px;
-          left: 18px;
-          right: 18px;
-          padding: 13px;
-          border-top: 1px solid #eee;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-
-        .dark .profile {
-          border-color: #2b2e39;
-        }
-
-        .avatar {
-          width: 38px;
-          height: 38px;
-          border-radius: 50%;
-          display: grid;
-          place-items: center;
-          background: linear-gradient(135deg,#fbbf24,#f97316);
-          color: white;
-          font-weight: bold;
-        }
-
-        .profile small {
-          color: #8a91a0;
-        }
-
-        /* MAIN */
-
-        .main {
-          margin-left: 250px;
-          width: calc(100% - 250px);
-          padding: 30px 38px;
-          max-width: 1500px;
-        }
-
-        .topbar {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 30px;
-        }
-
-        .topbar h1 {
-          font-size: 28px;
-          margin-bottom: 5px;
-        }
-
-        .topbar p {
-          color: #8a91a0;
-        }
-
-        .top-actions {
-          display: flex;
-          gap: 10px;
-        }
-
-        .icon-button {
-          width: 42px;
-          height: 42px;
-          border: 1px solid #e5e7eb;
-          border-radius: 11px;
-          background: white;
-          cursor: pointer;
-        }
-
-        .dark .icon-button {
-          background: #191c27;
-          border-color: #303442;
-          color: white;
-        }
-
-        /* DASHBOARD CARDS */
-
-        .stats {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 18px;
-          margin-bottom: 22px;
-        }
-
-        .stat {
-          background: white;
-          border-radius: 17px;
-          padding: 20px;
-          border: 1px solid #eceef3;
-        }
-
-        .dark .stat,
-        .dark .card {
-          background: #191c27;
-          border-color: #292d3a;
-        }
-
-        .stat-top {
-          display: flex;
-          justify-content: space-between;
-          color: #8a91a0;
-          font-size: 13px;
-        }
-
-        .stat-icon {
-          width: 40px;
-          height: 40px;
-          display: grid;
-          place-items: center;
-          border-radius: 11px;
-          background: #eef0ff;
-        }
-
-        .stat h2 {
-          margin-top: 13px;
-          font-size: 27px;
-        }
-
-        .positive {
-          color: #10b981;
-          font-size: 12px;
-          margin-top: 5px;
-        }
-
-        /* GRID */
-
-        .grid {
-          display: grid;
-          grid-template-columns: 1.35fr .9fr;
-          gap: 20px;
-        }
-
-        .card {
-          background: white;
-          border: 1px solid #eceef3;
-          border-radius: 17px;
-          padding: 22px;
-          margin-bottom: 20px;
-        }
-
-        .card-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 18px;
-        }
-
-        .card-header h3 {
-          font-size: 17px;
-        }
-
-        .view {
-          color: #6366f1;
-          border: none;
-          background: none;
-          cursor: pointer;
-          font-size: 13px;
-        }
-
-        /* TASKS */
-
-        .task {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 13px 0;
-          border-bottom: 1px solid #f0f1f4;
-        }
-
-        .dark .task {
-          border-color: #2a2e39;
-        }
-
-        .task:last-child {
-          border: none;
-        }
-
-        .check {
-          width: 22px;
-          height: 22px;
-          border-radius: 7px;
-          border: 2px solid #cfd3dd;
-          cursor: pointer;
-          display: grid;
-          place-items: center;
-          background: transparent;
-          color: white;
-        }
-
-        .check.done {
-          background: #6366f1;
-          border-color: #6366f1;
-        }
-
-        .task-info {
-          flex: 1;
-        }
-
-        .task-info strong {
-          display: block;
-          font-size: 14px;
-        }
-
-        .task.done-text strong {
-          text-decoration: line-through;
-          color: #9ca3af;
-        }
-
-        .task-info small {
-          color: #9298a6;
-        }
-
-        .date {
-          background: #f3f4f6;
-          padding: 5px 9px;
-          border-radius: 7px;
-          font-size: 11px;
-          color: #6b7280;
-        }
-
-        .dark .date {
-          background: #292d39;
-        }
-
-        /* SCHEDULE */
-
-        .schedule-item {
-          display: flex;
-          align-items: center;
-          gap: 15px;
-          padding: 13px 0;
-        }
-
-        .time {
-          width: 48px;
-          color: #9ca3af;
-          font-size: 12px;
-        }
-
-        .class-line {
-          width: 4px;
-          height: 38px;
-          border-radius: 5px;
-        }
-
-        .class-info {
-          flex: 1;
-        }
-
-        .class-info strong {
-          display: block;
-          font-size: 14px;
-        }
-
-        .class-info small {
-          color: #9298a6;
-        }
-
-        /* GRADES */
-
-        .grade {
-          margin-bottom: 17px;
-        }
-
-        .grade-label {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 7px;
-          font-size: 13px;
-        }
-
-        .progress {
-          height: 7px;
-          background: #edf0f4;
-          border-radius: 20px;
-          overflow: hidden;
-        }
-
-        .dark .progress {
-          background: #2c303b;
-        }
-
-        .progress div {
-          height: 100%;
-          background: linear-gradient(90deg,#6366f1,#8b5cf6);
-          border-radius: 20px;
-        }
-
-        /* POMODORO */
-
-        .pomodoro {
-          text-align: center;
-          padding: 20px 0;
-        }
-
-        .timer {
-          width: 190px;
-          height: 190px;
-          border-radius: 50%;
-          margin: 5px auto 20px;
-          display: grid;
-          place-items: center;
-          border: 10px solid #e9eaff;
-          box-shadow: inset 0 0 0 8px #f7f7ff;
-        }
-
-        .dark .timer {
-          border-color: #35385a;
-          box-shadow: inset 0 0 0 8px #202332;
-        }
-
-        .timer span {
-          font-size: 39px;
-          font-weight: 800;
-        }
-
-        .timer small {
-          display: block;
-          color: #8b91a0;
-          font-size: 12px;
-          text-align: center;
-        }
-
-        .primary {
-          border: none;
-          background: linear-gradient(135deg,#6366f1,#7c3aed);
-          color: white;
-          padding: 11px 24px;
-          border-radius: 10px;
-          cursor: pointer;
-          font-weight: 700;
-        }
-
-        .secondary {
-          border: 1px solid #dddfea;
-          background: white;
-          padding: 10px 17px;
-          border-radius: 9px;
-          cursor: pointer;
-          margin-left: 7px;
-        }
-
-        .dark .secondary {
-          background: #222530;
-          border-color: #373b49;
-          color: white;
-        }
-
-        /* FORMS */
-
-        .form {
-          display: flex;
-          gap: 8px;
-          margin-bottom: 15px;
-        }
-
-        .form input,
-        .form textarea {
-          flex: 1;
-          border: 1px solid #e0e3ea;
-          border-radius: 9px;
-          padding: 11px 13px;
-          outline: none;
-          background: white;
-          color: #182033;
-        }
-
-        .dark input,
-        .dark textarea {
-          background: #222530;
-          border-color: #363a48;
-          color: white;
-        }
-
-        .form button {
-          border: none;
-          background: #6366f1;
-          color: white;
-          border-radius: 9px;
-          padding: 0 17px;
-          cursor: pointer;
-        }
-
-        /* NOTES */
-
-        .notes {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 15px;
-        }
-
-        .note {
-          background: #fffbea;
-          border-radius: 13px;
-          padding: 17px;
-          min-height: 120px;
-        }
-
-        .dark .note {
-          background: #29281e;
-        }
-
-        .note h4 {
-          margin-bottom: 9px;
-        }
-
-        .note p {
-          color: #74706a;
-          font-size: 13px;
-          line-height: 1.5;
-        }
-
-        /* CHAT */
-
-        .messages {
-          height: 320px;
-          overflow-y: auto;
-          margin-bottom: 15px;
-        }
-
-        .message {
-          margin-bottom: 13px;
-        }
-
-        .message strong {
-          font-size: 12px;
-          color: #6366f1;
-        }
-
-        .bubble {
-          display: inline-block;
-          margin-top: 4px;
-          background: #f1f2f6;
-          padding: 9px 12px;
-          border-radius: 10px;
-          font-size: 13px;
-        }
-
-        .dark .bubble {
-          background: #292d38;
-        }
-
-        /* PAGE */
-
-        .page-title {
-          margin-bottom: 22px;
-        }
-
-        .page-title h2 {
-          font-size: 24px;
-        }
-
-        .page-title p {
-          color: #8a91a0;
-          margin-top: 5px;
-        }
-
-        .full {
-          width: 100%;
-        }
-
-        .empty {
-          text-align: center;
-          padding: 50px;
-          color: #9298a6;
-        }
-
-        /* MOBILE */
-
-        @media(max-width: 1000px) {
-          .stats {
-            grid-template-columns: repeat(2,1fr);
-          }
-
-          .grid {
-            grid-template-columns: 1fr;
-          }
-        }
-
-        @media(max-width: 700px) {
-          .sidebar {
-            width: 70px;
-            padding: 20px 8px;
-          }
-
-          .logo h2,
-          .menu-title,
-          .nav button span,
-          .profile > div {
-            display: none;
-          }
-
-          .logo {
-            justify-content: center;
-            padding: 0 0 25px;
-          }
-
-          .nav button {
-            justify-content: center;
-            padding: 13px;
-          }
-
-          .profile {
-            justify-content: center;
-          }
-
-          .main {
-            margin-left: 70px;
-            width: calc(100% - 70px);
-            padding: 20px;
-          }
-
-          .stats {
-            grid-template-columns: 1fr;
-          }
-
-          .notes {
-            grid-template-columns: 1fr;
-          }
-
-          .topbar h1 {
-            font-size: 22px;
-          }
-        }
-      `}</style>
-
-      {/* SIDEBAR */}
-
-      <aside className="sidebar">
-        <div className="logo">
-          <div className="logo-icon">U</div>
-          <h2>Uni<span>Hub</span></h2>
-        </div>
-
-        <div className="menu-title">MENÚ PRINCIPAL</div>
-
-        <nav className="nav">
-          {menu.map(([name, icon]) => (
-            <button
-              key={name}
-              className={active === name ? "active" : ""}
-              onClick={() => setActive(name)}
+    grades.reduce((total, item) => total + item.grade, 0) /
+    grades.length;
+
+  const schedule = [
+    {
+      time: "8:00 AM",
+      subject: "Programación",
+      room: "Aula 301",
+      color: "#6366F1",
+    },
+    {
+      time: "10:00 AM",
+      subject: "Matemáticas",
+      room: "Aula 204",
+      color: "#EC4899",
+    },
+    {
+      time: "1:00 PM",
+      subject: "Bases de Datos",
+      room: "Laboratorio",
+      color: "#14B8A6",
+    },
+    {
+      time: "3:00 PM",
+      subject: "Inglés",
+      room: "Aula 102",
+      color: "#F59E0B",
+    },
+  ];
+
+  // -------------------------
+  // COLORES
+  // -------------------------
+
+  const colors = {
+    background: dark ? "#10131C" : "#F5F7FB",
+    card: dark ? "#191C27" : "#FFFFFF",
+    text: dark ? "#FFFFFF" : "#182033",
+    secondary: dark ? "#A8ADBA" : "#7B8190",
+    border: dark ? "#292D3A" : "#E8EAF0",
+    input: dark ? "#222530" : "#FFFFFF",
+    purple: "#6366F1",
+    purpleLight: dark ? "#292B48" : "#EEF0FF",
+  };
+
+  // -------------------------
+  // COMPONENTES
+  // -------------------------
+
+  const Header = ({ title, subtitle }) => (
+    <View style={styles.header}>
+      <View style={{ flex: 1 }}>
+        <Text
+          style={[
+            styles.headerTitle,
+            { color: colors.text },
+          ]}
+        >
+          {title}
+        </Text>
+
+        <Text
+          style={[
+            styles.headerSubtitle,
+            { color: colors.secondary },
+          ]}
+        >
+          {subtitle}
+        </Text>
+      </View>
+
+      <TouchableOpacity
+        style={[
+          styles.iconButton,
+          {
+            backgroundColor: colors.card,
+            borderColor: colors.border,
+          },
+        ]}
+        onPress={() => setDark(!dark)}
+      >
+        <Text style={styles.iconText}>
+          {dark ? "☀️" : "🌙"}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  const Card = ({ children, style }) => (
+    <View
+      style={[
+        styles.card,
+        {
+          backgroundColor: colors.card,
+          borderColor: colors.border,
+        },
+        style,
+      ]}
+    >
+      {children}
+    </View>
+  );
+
+  const StatCard = ({ icon, title, value, description }) => (
+    <View
+      style={[
+        styles.statCard,
+        {
+          backgroundColor: colors.card,
+          borderColor: colors.border,
+        },
+      ]}
+    >
+      <View style={styles.statTop}>
+        <Text style={{ color: colors.secondary }}>
+          {title}
+        </Text>
+
+        <View
+          style={[
+            styles.statIcon,
+            { backgroundColor: colors.purpleLight },
+          ]}
+        >
+          <Text>{icon}</Text>
+        </View>
+      </View>
+
+      <Text
+        style={[
+          styles.statValue,
+          { color: colors.text },
+        ]}
+      >
+        {value}
+      </Text>
+
+      <Text style={styles.positive}>
+        {description}
+      </Text>
+    </View>
+  );
+
+  // -------------------------
+  // DASHBOARD
+  // -------------------------
+
+  const Dashboard = () => (
+    <>
+      <Header
+        title="Buenos días, Juan 👋"
+        subtitle="Aquí tienes un resumen de tu vida universitaria."
+      />
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 30 }}
+      >
+        <View style={styles.statsContainer}>
+          <StatCard
+            icon="📊"
+            title="Promedio"
+            value={average.toFixed(1)}
+            description="↑ 0.3 este semestre"
+          />
+
+          <StatCard
+            icon="✓"
+            title="Tareas pendientes"
+            value={tasks.filter((t) => !t.done).length}
+            description="Mantén el ritmo 💪"
+          />
+
+          <StatCard
+            icon="📚"
+            title="Materias"
+            value="6"
+            description="Este semestre"
+          />
+
+          <StatCard
+            icon="⏱️"
+            title="Horas estudiadas"
+            value="24h"
+            description="↑ 12% esta semana"
+          />
+        </View>
+
+        <Card>
+          <View style={styles.cardHeader}>
+            <Text
+              style={[
+                styles.cardTitle,
+                { color: colors.text },
+              ]}
             >
-              <span className="nav-icon">{icon}</span>
-              <span>{name}</span>
-            </button>
+              📋 Próximas tareas
+            </Text>
+
+            <TouchableOpacity
+              onPress={() => setScreen("Tareas")}
+            >
+              <Text style={styles.link}>
+                Ver todas
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {tasks.slice(0, 3).map((task) => (
+            <TaskItem
+              key={task.id}
+              task={task}
+            />
           ))}
-        </nav>
+        </Card>
 
-        <div className="profile">
-          <div className="avatar">JD</div>
-          <div>
-            <strong>Juan David</strong>
-            <small>Estudiante</small>
-          </div>
-        </div>
-      </aside>
-
-      {/* MAIN */}
-
-      <main className="main">
-
-        <div className="topbar">
-          <div>
-            <h1>
-              {active === "Dashboard"
-                ? "Buenos días, Juan 👋"
-                : active}
-            </h1>
-
-            <p>
-              {active === "Dashboard"
-                ? "Aquí tienes un resumen de tu vida universitaria."
-                : "Administra tu información académica desde aquí."}
-            </p>
-          </div>
-
-          <div className="top-actions">
-            <button className="icon-button">🔔</button>
-            <button
-              className="icon-button"
-              onClick={() => setDark(!dark)}
+        <Card>
+          <View style={styles.cardHeader}>
+            <Text
+              style={[
+                styles.cardTitle,
+                { color: colors.text },
+              ]}
             >
-              {dark ? "☀️" : "🌙"}
-            </button>
-          </div>
-        </div>
+              📅 Horario de hoy
+            </Text>
 
-        {/* DASHBOARD */}
+            <TouchableOpacity
+              onPress={() => setScreen("Horario")}
+            >
+              <Text style={styles.link}>
+                Ver horario
+              </Text>
+            </TouchableOpacity>
+          </View>
 
-        {active === "Dashboard" && (
-          <>
-            <section className="stats">
-              <div className="stat">
-                <div className="stat-top">
-                  <span>Promedio</span>
-                  <div className="stat-icon">📊</div>
-                </div>
-                <h2>{average.toFixed(1)}</h2>
-                <div className="positive">↑ 0.3 este semestre</div>
-              </div>
+          {schedule.map((item) => (
+            <ScheduleItem
+              key={item.time}
+              item={item}
+            />
+          ))}
+        </Card>
 
-              <div className="stat">
-                <div className="stat-top">
-                  <span>Tareas pendientes</span>
-                  <div className="stat-icon">✓</div>
-                </div>
-                <h2>{tasks.filter(t => !t.done).length}</h2>
-                <div className="positive">Mantén el ritmo 💪</div>
-              </div>
+        <Card>
+          <View style={styles.cardHeader}>
+            <Text
+              style={[
+                styles.cardTitle,
+                { color: colors.text },
+              ]}
+            >
+              📊 Calificaciones
+            </Text>
 
-              <div className="stat">
-                <div className="stat-top">
-                  <span>Materias</span>
-                  <div className="stat-icon">📚</div>
-                </div>
-                <h2>6</h2>
-                <div className="positive">Este semestre</div>
-              </div>
+            <TouchableOpacity
+              onPress={() =>
+                setScreen("Calificaciones")
+              }
+            >
+              <Text style={styles.link}>
+                Detalles
+              </Text>
+            </TouchableOpacity>
+          </View>
 
-              <div className="stat">
-                <div className="stat-top">
-                  <span>Horas estudiadas</span>
-                  <div className="stat-icon">⏱</div>
-                </div>
-                <h2>24h</h2>
-                <div className="positive">↑ 12% esta semana</div>
-              </div>
-            </section>
+          {grades.map((item) => (
+            <GradeItem
+              key={item.subject}
+              item={item}
+            />
+          ))}
+        </Card>
 
-            <div className="grid">
-              <div>
-                <div className="card">
-                  <div className="card-header">
-                    <h3>📋 Próximas tareas</h3>
-                    <button
-                      className="view"
-                      onClick={() => setActive("Tareas")}
-                    >
-                      Ver todas
-                    </button>
-                  </div>
+        <Card>
+          <View style={styles.cardHeader}>
+            <Text
+              style={[
+                styles.cardTitle,
+                { color: colors.text },
+              ]}
+            >
+              ⏱️ Pomodoro
+            </Text>
 
-                  {tasks.map((task) => (
-                    <div
-                      className={
-                        task.done
-                          ? "task done-text"
-                          : "task"
-                      }
-                      key={task.id}
-                    >
-                      <button
-                        className={
-                          task.done
-                            ? "check done"
-                            : "check"
-                        }
-                        onClick={() => toggleTask(task.id)}
-                      >
-                        {task.done ? "✓" : ""}
-                      </button>
+            <TouchableOpacity
+              onPress={() => setScreen("Pomodoro")}
+            >
+              <Text style={styles.link}>
+                Abrir
+              </Text>
+            </TouchableOpacity>
+          </View>
 
-                      <div className="task-info">
-                        <strong>{task.title}</strong>
-                        <small>{task.subject}</small>
-                      </div>
+          <View style={styles.smallPomodoro}>
+            <Text
+              style={[
+                styles.smallTimer,
+                { color: colors.text },
+              ]}
+            >
+              {formatTime()}
+            </Text>
 
-                      <span className="date">
-                        {task.date}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="card">
-                  <div className="card-header">
-                    <h3>📅 Horario de hoy</h3>
-                    <button
-                      className="view"
-                      onClick={() => setActive("Horario")}
-                    >
-                      Ver horario
-                    </button>
-                  </div>
-
-                  {schedule.map((item) => (
-                    <div className="schedule-item" key={item[0]}>
-                      <div className="time">{item[0]}</div>
-                      <div
-                        className="class-line"
-                        style={{ background: item[3] }}
-                      />
-                      <div className="class-info">
-                        <strong>{item[1]}</strong>
-                        <small>{item[2]}</small>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <div className="card">
-                  <div className="card-header">
-                    <h3>📊 Calificaciones</h3>
-                    <button
-                      className="view"
-                      onClick={() =>
-                        setActive("Calificaciones")
-                      }
-                    >
-                      Detalles
-                    </button>
-                  </div>
-
-                  {grades.map((grade) => (
-                    <div className="grade" key={grade[0]}>
-                      <div className="grade-label">
-                        <span>{grade[0]}</span>
-                        <strong>{grade[1]}</strong>
-                      </div>
-
-                      <div className="progress">
-                        <div
-                          style={{
-                            width: `${grade[1] * 20}%`,
-                          }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="card">
-                  <div className="card-header">
-                    <h3>⏱ Pomodoro</h3>
-                  </div>
-
-                  <div className="pomodoro">
-                    <div className="timer">
-                      <div>
-                        <span>{formatTime()}</span>
-                        <small>Concentración</small>
-                      </div>
-                    </div>
-
-                    <button
-                      className="primary"
-                      onClick={() => setRunning(!running)}
-                    >
-                      {running ? "Pausar" : "Comenzar"}
-                    </button>
-
-                    <button
-                      className="secondary"
-                      onClick={() => {
-                        setRunning(false);
-                        setSeconds(25 * 60);
-                      }}
-                    >
-                      Reiniciar
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* TAREAS */}
-
-        {active === "Tareas" && (
-          <div className="card full">
-            <div className="card-header">
-              <h3>✓ Mis tareas</h3>
-            </div>
-
-            <div className="form">
-              <input
-                value={newTask}
-                onChange={(e) => setNewTask(e.target.value)}
-                placeholder="Escribe una nueva tarea..."
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") addTask();
-                }}
-              />
-              <button onClick={addTask}>Agregar</button>
-            </div>
-
-            {tasks.map((task) => (
-              <div
-                className={
-                  task.done
-                    ? "task done-text"
-                    : "task"
-                }
-                key={task.id}
-              >
-                <button
-                  className={
-                    task.done
-                      ? "check done"
-                      : "check"
-                  }
-                  onClick={() => toggleTask(task.id)}
-                >
-                  {task.done ? "✓" : ""}
-                </button>
-
-                <div className="task-info">
-                  <strong>{task.title}</strong>
-                  <small>{task.subject}</small>
-                </div>
-
-                <span className="date">{task.date}</span>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* HORARIO */}
-
-        {active === "Horario" && (
-          <div className="card">
-            <div className="card-header">
-              <h3>📅 Horario semanal</h3>
-            </div>
-
-            {schedule.map((item) => (
-              <div className="schedule-item" key={item[0]}>
-                <div className="time">{item[0]}</div>
-
-                <div
-                  className="class-line"
-                  style={{ background: item[3] }}
-                />
-
-                <div className="class-info">
-                  <strong>{item[1]}</strong>
-                  <small>{item[2]} · Lunes</small>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* CALIFICACIONES */}
-
-        {active === "Calificaciones" && (
-          <div className="card">
-            <div className="card-header">
-              <h3>📊 Mis calificaciones</h3>
-              <strong style={{ color: "#6366f1" }}>
-                Promedio: {average.toFixed(1)}
-              </strong>
-            </div>
-
-            {grades.map((grade) => (
-              <div className="grade" key={grade[0]}>
-                <div className="grade-label">
-                  <span>{grade[0]}</span>
-                  <strong>{grade[1]}</strong>
-                </div>
-
-                <div className="progress">
-                  <div
-                    style={{
-                      width: `${grade[1] * 20}%`,
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* POMODORO */}
-
-        {active === "Pomodoro" && (
-          <div className="card">
-            <div className="pomodoro">
-              <h2 style={{ marginBottom: 10 }}>
-                Sesión de concentración
-              </h2>
-
-              <p style={{ color: "#9298a6", marginBottom: 15 }}>
-                Estudia durante 25 minutos y descansa.
-              </p>
-
-              <div className="timer">
-                <div>
-                  <span>{formatTime()}</span>
-                  <small>Pomodoro</small>
-                </div>
-              </div>
-
-              <button
-                className="primary"
-                onClick={() => setRunning(!running)}
-              >
+            <TouchableOpacity
+              style={styles.primaryButton}
+              onPress={() => setRunning(!running)}
+            >
+              <Text style={styles.primaryButtonText}>
                 {running ? "Pausar" : "Comenzar"}
-              </button>
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </Card>
+      </ScrollView>
+    </>
+  );
 
-              <button
-                className="secondary"
-                onClick={() => {
-                  setRunning(false);
-                  setSeconds(25 * 60);
+  // -------------------------
+  // TASK ITEM
+  // -------------------------
+
+  const TaskItem = ({ task }) => (
+    <View style={styles.taskItem}>
+      <TouchableOpacity
+        style={[
+          styles.checkbox,
+          task.done && {
+            backgroundColor: colors.purple,
+            borderColor: colors.purple,
+          },
+        ]}
+        onPress={() => toggleTask(task.id)}
+      >
+        {task.done && (
+          <Text style={styles.checkText}>✓</Text>
+        )}
+      </TouchableOpacity>
+
+      <View style={{ flex: 1 }}>
+        <Text
+          style={[
+            styles.taskTitle,
+            {
+              color: task.done
+                ? colors.secondary
+                : colors.text,
+              textDecorationLine: task.done
+                ? "line-through"
+                : "none",
+            },
+          ]}
+        >
+          {task.title}
+        </Text>
+
+        <Text
+          style={[
+            styles.taskSubject,
+            { color: colors.secondary },
+          ]}
+        >
+          {task.subject}
+        </Text>
+      </View>
+
+      <View
+        style={[
+          styles.dateBadge,
+          {
+            backgroundColor: dark
+              ? "#292D39"
+              : "#F1F2F5",
+          },
+        ]}
+      >
+        <Text
+          style={[
+            styles.dateText,
+            { color: colors.secondary },
+          ]}
+        >
+          {task.date}
+        </Text>
+      </View>
+    </View>
+  );
+
+  // -------------------------
+  // HORARIO ITEM
+  // -------------------------
+
+  const ScheduleItem = ({ item }) => (
+    <View style={styles.scheduleItem}>
+      <Text
+        style={[
+          styles.time,
+          { color: colors.secondary },
+        ]}
+      >
+        {item.time}
+      </Text>
+
+      <View
+        style={[
+          styles.scheduleLine,
+          { backgroundColor: item.color },
+        ]}
+      />
+
+      <View>
+        <Text
+          style={[
+            styles.className,
+            { color: colors.text },
+          ]}
+        >
+          {item.subject}
+        </Text>
+
+        <Text
+          style={[
+            styles.classRoom,
+            { color: colors.secondary },
+          ]}
+        >
+          {item.room}
+        </Text>
+      </View>
+    </View>
+  );
+
+  // -------------------------
+  // NOTAS
+  // -------------------------
+
+  const Notes = () => (
+    <>
+      <Header
+        title="📚 Mis apuntes"
+        subtitle="Guarda tus notas de clase."
+      />
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+      >
+        <Card>
+          <View style={styles.inputRow}>
+            <TextInput
+              value={newNote}
+              onChangeText={setNewNote}
+              placeholder="Escribe un nuevo apunte..."
+              placeholderTextColor="#999"
+              style={[
+                styles.input,
+                {
+                  backgroundColor: colors.input,
+                  color: colors.text,
+                  borderColor: colors.border,
+                },
+              ]}
+            />
+
+            <TouchableOpacity
+              style={styles.addButton}
+              onPress={addNote}
+            >
+              <Text style={styles.addButtonText}>
+                +
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {notes.map((note) => (
+            <View
+              key={note.id}
+              style={[
+                styles.note,
+                {
+                  backgroundColor: dark
+                    ? "#302F22"
+                    : "#FFF9DF",
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.noteTitle,
+                  { color: colors.text },
+                ]}
+              >
+                {note.title}
+              </Text>
+
+              <Text style={styles.noteText}>
+                {note.text}
+              </Text>
+            </View>
+          ))}
+        </Card>
+      </ScrollView>
+    </>
+  );
+
+  // -------------------------
+  // TAREAS
+  // -------------------------
+
+  const Tasks = () => (
+    <>
+      <Header
+        title="✓ Mis tareas"
+        subtitle="Organiza tus trabajos pendientes."
+      />
+
+      <ScrollView>
+        <Card>
+          <View style={styles.inputRow}>
+            <TextInput
+              value={newTask}
+              onChangeText={setNewTask}
+              placeholder="Nueva tarea..."
+              placeholderTextColor="#999"
+              style={[
+                styles.input,
+                {
+                  backgroundColor: colors.input,
+                  color: colors.text,
+                  borderColor: colors.border,
+                },
+              ]}
+              onSubmitEditing={addTask}
+            />
+
+            <TouchableOpacity
+              style={styles.addButton}
+              onPress={addTask}
+            >
+              <Text style={styles.addButtonText}>
+                +
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {tasks.map((task) => (
+            <TaskItem
+              key={task.id}
+              task={task}
+            />
+          ))}
+        </Card>
+      </ScrollView>
+    </>
+  );
+
+  // -------------------------
+  // CALIFICACIONES
+  // -------------------------
+
+  const GradeItem = ({ item }) => (
+    <View style={styles.grade}>
+      <View style={styles.gradeHeader}>
+        <Text
+          style={[
+            styles.gradeSubject,
+            { color: colors.text },
+          ]}
+        >
+          {item.subject}
+        </Text>
+
+        <Text style={styles.gradeNumber}>
+          {item.grade}
+        </Text>
+      </View>
+
+      <View
+        style={[
+          styles.progressBackground,
+          {
+            backgroundColor: dark
+              ? "#30333F"
+              : "#ECEEF3",
+          },
+        ]}
+      >
+        <View
+          style={[
+            styles.progressBar,
+            {
+              width: `${item.grade * 20}%`,
+            },
+          ]}
+        />
+      </View>
+    </View>
+  );
+
+  const Grades = () => (
+    <>
+      <Header
+        title="📊 Calificaciones"
+        subtitle="Consulta tu rendimiento académico."
+      />
+
+      <ScrollView>
+        <Card>
+          <View style={styles.averageBox}>
+            <Text style={styles.averageNumber}>
+              {average.toFixed(1)}
+            </Text>
+
+            <Text
+              style={[
+                styles.averageLabel,
+                { color: colors.secondary },
+              ]}
+            >
+              Promedio general
+            </Text>
+          </View>
+
+          {grades.map((item) => (
+            <GradeItem
+              key={item.subject}
+              item={item}
+            />
+          ))}
+        </Card>
+      </ScrollView>
+    </>
+  );
+
+  // -------------------------
+  // HORARIO
+  // -------------------------
+
+  const Schedule = () => (
+    <>
+      <Header
+        title="📅 Mi horario"
+        subtitle="Tus próximas clases."
+      />
+
+      <ScrollView>
+        <Card>
+          <Text
+            style={[
+              styles.dayTitle,
+              { color: colors.text },
+            ]}
+          >
+            Lunes
+          </Text>
+
+          {schedule.map((item) => (
+            <ScheduleItem
+              key={item.time}
+              item={item}
+            />
+          ))}
+        </Card>
+      </ScrollView>
+    </>
+  );
+
+  // -------------------------
+  // POMODORO
+  // -------------------------
+
+  const Pomodoro = () => (
+    <>
+      <Header
+        title="⏱️ Pomodoro"
+        subtitle="Concéntrate y aprovecha tu tiempo."
+      />
+
+      <Card>
+        <View style={styles.pomodoroContainer}>
+          <View
+            style={[
+              styles.timerCircle,
+              {
+                borderColor: dark
+                  ? "#393C62"
+                  : "#E6E7FF",
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.timerText,
+                { color: colors.text },
+              ]}
+            >
+              {formatTime()}
+            </Text>
+
+            <Text
+              style={[
+                styles.timerLabel,
+                { color: colors.secondary },
+              ]}
+            >
+              Concentración
+            </Text>
+          </View>
+
+          <View style={styles.timerButtons}>
+            <TouchableOpacity
+              style={styles.primaryButton}
+              onPress={() => setRunning(!running)}
+            >
+              <Text style={styles.primaryButtonText}>
+                {running ? "Pausar" : "Comenzar"}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.secondaryButton,
+                {
+                  backgroundColor: colors.card,
+                  borderColor: colors.border,
+                },
+              ]}
+              onPress={() => {
+                setRunning(false);
+                setSeconds(25 * 60);
+              }}
+            >
+              <Text
+                style={{
+                  color: colors.text,
+                  fontWeight: "600",
                 }}
               >
                 Reiniciar
-              </button>
-            </div>
-          </div>
-        )}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Card>
+    </>
+  );
 
-        {/* APUNTES */}
+  // -------------------------
+  // GRUPOS
+  // -------------------------
 
-        {active === "Apuntes" && (
-          <div className="card">
-            <div className="card-header">
-              <h3>📚 Mis apuntes</h3>
-            </div>
+  const Groups = () => (
+    <>
+      <Header
+        title="👥 Grupos de estudio"
+        subtitle="Estudia junto a tus compañeros."
+      />
 
-            <div className="form">
-              <input
-                value={newNote}
-                onChange={(e) => setNewNote(e.target.value)}
-                placeholder="Escribe un nuevo apunte..."
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") addNote();
-                }}
-              />
+      <ScrollView>
+        <Card>
+          <Group
+            letter="R"
+            name="Grupo de React"
+            description="8 estudiantes · 3 mensajes nuevos"
+          />
 
-              <button onClick={addNote}>
-                Guardar
-              </button>
-            </div>
+          <Group
+            letter="M"
+            name="Matemáticas II"
+            description="5 estudiantes · Examen viernes"
+          />
 
-            <div className="notes">
-              {notes.map((note) => (
-                <div className="note" key={note.id}>
-                  <h4>{note.title}</h4>
-                  <p>{note.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+          <Group
+            letter="B"
+            name="Bases de Datos"
+            description="6 estudiantes · Proyecto grupal"
+          />
+        </Card>
 
-        {/* GRUPOS */}
+        <Card>
+          <Text
+            style={[
+              styles.cardTitle,
+              {
+                color: colors.text,
+                marginBottom: 15,
+              },
+            ]}
+          >
+            Crear un grupo
+          </Text>
 
-        {active === "Grupos" && (
-          <div className="grid">
-            <div className="card">
-              <div className="card-header">
-                <h3>👥 Mis grupos</h3>
-              </div>
+          <TouchableOpacity
+            style={styles.primaryButton}
+          >
+            <Text style={styles.primaryButtonText}>
+              + Crear grupo
+            </Text>
+          </TouchableOpacity>
+        </Card>
+      </ScrollView>
+    </>
+  );
 
-              <div className="task">
-                <div className="avatar">R</div>
-                <div className="task-info">
-                  <strong>Grupo de React</strong>
-                  <small>8 estudiantes · 3 mensajes nuevos</small>
-                </div>
-              </div>
+  const Group = ({
+    letter,
+    name,
+    description,
+  }) => (
+    <View style={styles.group}>
+      <View style={styles.groupAvatar}>
+        <Text style={styles.groupAvatarText}>
+          {letter}
+        </Text>
+      </View>
 
-              <div className="task">
-                <div className="avatar">M</div>
-                <div className="task-info">
-                  <strong>Matemáticas II</strong>
-                  <small>5 estudiantes · Examen viernes</small>
-                </div>
-              </div>
+      <View style={{ flex: 1 }}>
+        <Text
+          style={[
+            styles.groupName,
+            { color: colors.text },
+          ]}
+        >
+          {name}
+        </Text>
 
-              <div className="task">
-                <div className="avatar">B</div>
-                <div className="task-info">
-                  <strong>Bases de Datos</strong>
-                  <small>6 estudiantes · Proyecto grupal</small>
-                </div>
-              </div>
-            </div>
+        <Text
+          style={[
+            styles.groupDescription,
+            { color: colors.secondary },
+          ]}
+        >
+          {description}
+        </Text>
+      </View>
+    </View>
+  );
 
-            <div className="card">
-              <h3 style={{ marginBottom: 15 }}>
-                + Crear grupo
-              </h3>
+  // -------------------------
+  // CHAT
+  // -------------------------
 
-              <input
-                className="full"
-                placeholder="Nombre del grupo"
-                style={{
-                  padding: 12,
-                  borderRadius: 9,
-                  border: "1px solid #dddfea",
-                }}
-              />
+  const Chat = () => (
+    <>
+      <Header
+        title="💬 Chat"
+        subtitle="Habla con tus compañeros."
+      />
 
-              <button
-                className="primary"
-                style={{ marginTop: 12 }}
+      <Card style={{ flex: 1 }}>
+        <ScrollView style={{ maxHeight: 400 }}>
+          {messages.map((message, index) => (
+            <View
+              key={index}
+              style={styles.message}
+            >
+              <Text style={styles.messageUser}>
+                {message.user}
+              </Text>
+
+              <View
+                style={[
+                  styles.bubble,
+                  {
+                    backgroundColor: dark
+                      ? "#292D38"
+                      : "#F1F2F6",
+                  },
+                ]}
               >
-                Crear grupo
-              </button>
-            </div>
-          </div>
-        )}
+                <Text
+                  style={{ color: colors.text }}
+                >
+                  {message.text}
+                </Text>
+              </View>
+            </View>
+          ))}
+        </ScrollView>
 
-        {/* CHAT */}
+        <View style={styles.inputRow}>
+          <TextInput
+            value={newMessage}
+            onChangeText={setNewMessage}
+            placeholder="Escribe un mensaje..."
+            placeholderTextColor="#999"
+            style={[
+              styles.input,
+              {
+                backgroundColor: colors.input,
+                color: colors.text,
+                borderColor: colors.border,
+              },
+            ]}
+            onSubmitEditing={sendMessage}
+          />
 
-        {active === "Chat" && (
-          <div className="card">
-            <div className="card-header">
-              <h3>💬 Chat de estudiantes</h3>
-              <span style={{ color: "#10b981", fontSize: 12 }}>
-                ● 12 conectados
-              </span>
-            </div>
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={sendMessage}
+          >
+            <Text style={styles.addButtonText}>
+              ➤
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </Card>
+    </>
+  );
 
-            <div className="messages">
-              {messages.map((message, index) => (
-                <div className="message" key={index}>
-                  <strong>{message.user}</strong>
-                  <br />
-                  <span className="bubble">
-                    {message.text}
-                  </span>
-                </div>
-              ))}
-            </div>
+  // -------------------------
+  // CONTENIDO
+  // -------------------------
 
-            <div className="form">
-              <input
-                value={newMessage}
-                onChange={(e) =>
-                  setNewMessage(e.target.value)
-                }
-                placeholder="Escribe un mensaje..."
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") sendMessage();
-                }}
-              />
+  const renderScreen = () => {
+    switch (screen) {
+      case "Tareas":
+        return <Tasks />;
 
-              <button onClick={sendMessage}>
-                Enviar
-              </button>
-            </div>
-          </div>
-        )}
+      case "Horario":
+        return <Schedule />;
 
-      </main>
-    </div>
+      case "Calificaciones":
+        return <Grades />;
+
+      case "Pomodoro":
+        return <Pomodoro />;
+
+      case "Apuntes":
+        return <Notes />;
+
+      case "Grupos":
+        return <Groups />;
+
+      case "Chat":
+        return <Chat />;
+
+      default:
+        return <Dashboard />;
+    }
+  };
+
+  // -------------------------
+  // APP
+  // -------------------------
+
+  return (
+    <SafeAreaView
+      style={[
+        styles.safe,
+        { backgroundColor: colors.background },
+      ]}
+    >
+      <StatusBar
+        barStyle={
+          dark ? "light-content" : "dark-content"
+        }
+        backgroundColor={colors.background}
+      />
+
+      <View style={styles.app}>
+        <View style={styles.content}>
+          {renderScreen()}
+        </View>
+
+        {/* BARRA DE NAVEGACIÓN */}
+
+        <View
+          style={[
+            styles.bottomNav,
+            {
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+            },
+          ]}
+        >
+          <NavButton
+            icon="⌂"
+            label="Inicio"
+            active={screen === "Inicio"}
+            onPress={() => setScreen("Inicio")}
+          />
+
+          <NavButton
+            icon="✓"
+            label="Tareas"
+            active={screen === "Tareas"}
+            onPress={() => setScreen("Tareas")}
+          />
+
+          <NavButton
+            icon="📅"
+            label="Horario"
+            active={screen === "Horario"}
+            onPress={() => setScreen("Horario")}
+          />
+
+          <NavButton
+            icon="📚"
+            label="Apuntes"
+            active={screen === "Apuntes"}
+            onPress={() => setScreen("Apuntes")}
+          />
+
+          <NavButton
+            icon="💬"
+            label="Chat"
+            active={screen === "Chat"}
+            onPress={() => setScreen("Chat")}
+          />
+        </View>
+      </View>
+    </SafeAreaView>
   );
 }
+
+// -------------------------
+// NAV BUTTON
+// -------------------------
+
+function NavButton({
+  icon,
+  label,
+  active,
+  onPress,
+}) {
+  return (
+    <TouchableOpacity
+      style={styles.navButton}
+      onPress={onPress}
+    >
+      <Text
+        style={[
+          styles.navIcon,
+          {
+            color: active
+              ? "#6366F1"
+              : "#9298A6",
+          },
+        ]}
+      >
+        {icon}
+      </Text>
+
+      <Text
+        style={[
+          styles.navLabel,
+          {
+            color: active
+              ? "#6366F1"
+              : "#9298A6",
+          },
+        ]}
+      >
+        {label}
+      </Text>
+    </TouchableOpacity>
+  );
+}
+
+// -------------------------
+// ESTILOS
+// -------------------------
+
+const styles = StyleSheet.create({
+  safe: {
+    flex: 1,
+  },
+
+  app: {
+    flex: 1,
+  },
+
+  content: {
+    flex: 1,
+    paddingHorizontal: 18,
+    paddingTop: 15,
+  },
+
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+
+  headerTitle: {
+    fontSize: 25,
+    fontWeight: "800",
+  },
+
+  headerSubtitle: {
+    fontSize: 13,
+    marginTop: 5,
+  },
+
+  iconButton: {
+    width: 43,
+    height: 43,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+  },
+
+  iconText: {
+    fontSize: 18,
+  },
+
+  statsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
+
+  statCard: {
+    width: "48%",
+    padding: 15,
+    borderRadius: 16,
+    borderWidth: 1,
+    marginBottom: 12,
+  },
+
+  statTop: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  statIcon: {
+    width: 35,
+    height: 35,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  statValue: {
+    fontSize: 25,
+    fontWeight: "800",
+    marginTop: 8,
+  },
+
+  positive: {
+    color: "#10B981",
+    fontSize: 11,
+    marginTop: 4,
+  },
+
+  card: {
+    borderRadius: 17,
+    padding: 18,
+    marginBottom: 16,
+    borderWidth: 1,
+  },
+
+  cardHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+
+  cardTitle: {
+    fontSize: 17,
+    fontWeight: "800",
+  },
+
+  link: {
+    color: "#6366F1",
+    fontSize: 13,
+    fontWeight: "600",
+  },
+
+  taskItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#EEEEEE",
+    gap: 10,
+  },
+
+  checkbox: {
+    width: 23,
+    height: 23,
+    borderRadius: 7,
+    borderWidth: 2,
+    borderColor: "#CED2DC",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  checkText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+
+  taskTitle: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+
+  taskSubject: {
+    fontSize: 11,
+    marginTop: 3,
+  },
+
+  dateBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 7,
+  },
+
+  dateText: {
+    fontSize: 10,
+  },
+
+  scheduleItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+
+  time: {
+    width: 65,
+    fontSize: 11,
+  },
+
+  scheduleLine: {
+    width: 4,
+    height: 42,
+    borderRadius: 5,
+    marginRight: 13,
+  },
+
+  className: {
+    fontSize: 14,
+    fontWeight: "700",
+  },
+
+  classRoom: {
+    fontSize: 11,
+    marginTop: 3,
+  },
+
+  grade: {
+    marginBottom: 17,
+  },
+
+  gradeHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 7,
+  },
+
+  gradeSubject: {
+    fontSize: 13,
+  },
+
+  gradeNumber: {
+    color: "#6366F1",
+    fontWeight: "800",
+  },
+
+  progressBackground: {
+    height: 7,
+    borderRadius: 10,
+    overflow: "hidden",
+  },
+
+  progressBar: {
+    height: "100%",
+    backgroundColor: "#6366F1",
+    borderRadius: 10,
+  },
+
+  smallPomodoro: {
+    alignItems: "center",
+    paddingVertical: 10,
+  },
+
+  smallTimer: {
+    fontSize: 32,
+    fontWeight: "800",
+    marginBottom: 12,
+  },
+
+  primaryButton: {
+    backgroundColor: "#6366F1",
+    paddingHorizontal: 25,
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+
+  primaryButtonText: {
+    color: "white",
+    fontWeight: "700",
+  },
+
+  secondaryButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    marginLeft: 8,
+  },
+
+  inputRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginBottom: 15,
+  },
+
+  input: {
+    flex: 1,
+    height: 45,
+    borderRadius: 10,
+    borderWidth: 1,
+    paddingHorizontal: 13,
+  },
+
+  addButton: {
+    width: 45,
+    height: 45,
+    borderRadius: 10,
+    backgroundColor: "#6366F1",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  addButtonText: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+
+  note: {
+    padding: 17,
+    borderRadius: 13,
+    marginBottom: 12,
+  },
+
+  noteTitle: {
+    fontWeight: "800",
+    fontSize: 15,
+    marginBottom: 7,
+  },
+
+  noteText: {
+    color: "#74706A",
+    lineHeight: 20,
+    fontSize: 13,
+  },
+
+  averageBox: {
+    alignItems: "center",
+    marginBottom: 25,
+  },
+
+  averageNumber: {
+    color: "#6366F1",
+    fontSize: 48,
+    fontWeight: "900",
+  },
+
+  averageLabel: {
+    fontSize: 13,
+  },
+
+  dayTitle: {
+    fontSize: 20,
+    fontWeight: "800",
+    marginBottom: 20,
+  },
+
+  pomodoroContainer: {
+    alignItems: "center",
+    paddingVertical: 25,
+  },
+
+  timerCircle: {
+    width: 245,
+    height: 245,
+    borderRadius: 125,
+    borderWidth: 12,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  timerText: {
+    fontSize: 47,
+    fontWeight: "900",
+  },
+
+  timerLabel: {
+    fontSize: 12,
+    marginTop: 3,
+  },
+
+  timerButtons: {
+    flexDirection: "row",
+    marginTop: 25,
+  },
+
+  group: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 18,
+  },
+
+  groupAvatar: {
+    width: 45,
+    height: 45,
+    borderRadius: 15,
+    backgroundColor: "#6366F1",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+
+  groupAvatarText: {
+    color: "white",
+    fontWeight: "800",
+    fontSize: 18,
+  },
+
+  groupName: {
+    fontWeight: "700",
+    fontSize: 14,
+  },
+
+  groupDescription: {
+    fontSize: 11,
+    marginTop: 3,
+  },
+
+  message: {
+    marginBottom: 15,
+  },
+
+  messageUser: {
+    color: "#6366F1",
+    fontWeight: "800",
+    fontSize: 12,
+    marginBottom: 4,
+  },
+
+  bubble: {
+    padding: 11,
+    borderRadius: 11,
+    alignSelf: "flex-start",
+  },
+
+  bottomNav: {
+    height: 72,
+    borderTopWidth: 1,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    paddingBottom: 5,
+  },
+
+  navButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 65,
+  },
+
+  navIcon: {
+    fontSize: 19,
+    marginBottom: 3,
+  },
+
+  navLabel: {
+    fontSize: 10,
+    fontWeight: "600",
+  },
+});
